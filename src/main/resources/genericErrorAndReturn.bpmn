@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_1f0iye7" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="3.5.0">
+  <bpmn:process id="GenericErrorAndReturn" name="Generic Error And Return" isExecutable="true">
+    <bpmn:startEvent id="StartEvent_1">
+      <bpmn:outgoing>SequenceFlow_12qf5a7</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:sequenceFlow id="SequenceFlow_12qf5a7" sourceRef="StartEvent_1" targetRef="ServiceTheFirstTask" />
+    <bpmn:sequenceFlow id="SequenceFlow_0r0lwo6" sourceRef="ServiceTheFirstTask" targetRef="ServiceIITask" />
+    <bpmn:sequenceFlow id="SequenceFlow_1o9wtcd" sourceRef="ServiceIITask" targetRef="ServiceX96Task" />
+    <bpmn:sequenceFlow id="SequenceFlow_15mbdi6" sourceRef="ServiceX96Task" targetRef="EndEvent_05sbgu7" />
+    <bpmn:endEvent id="EndEvent_05sbgu7">
+      <bpmn:incoming>SequenceFlow_15mbdi6</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:serviceTask id="ServiceTheFirstTask" name="Service The First" camunda:delegateExpression="#{coolServiceOne}">
+      <bpmn:incoming>SequenceFlow_12qf5a7</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0r0lwo6</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="ServiceIITask" name="Service II" camunda:delegateExpression="#{coolServiceTwo}">
+      <bpmn:incoming>SequenceFlow_0r0lwo6</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1o9wtcd</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="ServiceX96Task" name="Service x = (9 - 6)" camunda:delegateExpression="#{coolServiceThree}">
+      <bpmn:incoming>SequenceFlow_1o9wtcd</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_15mbdi6</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:subProcess id="SubProcess_01hi1i9" triggeredByEvent="true">
+      <bpmn:startEvent id="GenericErrorStartEvent" name="Generic Error">
+        <bpmn:outgoing>SequenceFlow_1beugel</bpmn:outgoing>
+        <bpmn:errorEventDefinition id="ErrorEventDefinition_1wrls72" errorRef="Error_0tq3w8p" camunda:errorMessageVariable="errorTaskId" />
+      </bpmn:startEvent>
+      <bpmn:sequenceFlow id="SequenceFlow_1beugel" sourceRef="GenericErrorStartEvent" targetRef="FixIssueTask" />
+      <bpmn:sequenceFlow id="SequenceFlow_1vvp5o0" sourceRef="FixIssueTask" targetRef="ReturnToLastTaskTask" />
+      <bpmn:endEvent id="ErrorFixedAndReturnedEndEvent" name="Error Fixed and returned">
+        <bpmn:incoming>SequenceFlow_0zped8j</bpmn:incoming>
+      </bpmn:endEvent>
+      <bpmn:sequenceFlow id="SequenceFlow_0zped8j" sourceRef="ReturnToLastTaskTask" targetRef="ErrorFixedAndReturnedEndEvent" />
+      <bpmn:serviceTask id="ReturnToLastTaskTask" name="Return to last task" camunda:asyncAfter="true" camunda:delegateExpression="#{returnToFlowAfterError}">
+        <bpmn:incoming>SequenceFlow_1vvp5o0</bpmn:incoming>
+        <bpmn:outgoing>SequenceFlow_0zped8j</bpmn:outgoing>
+      </bpmn:serviceTask>
+      <bpmn:userTask id="FixIssueTask" name="Fix issue" camunda:assignee="reb">
+        <bpmn:incoming>SequenceFlow_1beugel</bpmn:incoming>
+        <bpmn:outgoing>SequenceFlow_1vvp5o0</bpmn:outgoing>
+      </bpmn:userTask>
+    </bpmn:subProcess>
+  </bpmn:process>
+  <bpmn:error id="Error_0tq3w8p" name="GenericError" errorCode="GenericError" />
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="GenericErrorAndReturn">
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
+        <dc:Bounds x="179" y="319" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_12qf5a7_di" bpmnElement="SequenceFlow_12qf5a7">
+        <di:waypoint x="215" y="337" />
+        <di:waypoint x="270" y="337" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0r0lwo6_di" bpmnElement="SequenceFlow_0r0lwo6">
+        <di:waypoint x="370" y="337" />
+        <di:waypoint x="430" y="337" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1o9wtcd_di" bpmnElement="SequenceFlow_1o9wtcd">
+        <di:waypoint x="530" y="337" />
+        <di:waypoint x="590" y="337" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_15mbdi6_di" bpmnElement="SequenceFlow_15mbdi6">
+        <di:waypoint x="690" y="337" />
+        <di:waypoint x="802" y="337" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="EndEvent_05sbgu7_di" bpmnElement="EndEvent_05sbgu7">
+        <dc:Bounds x="802" y="319" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ServiceTask_1q6d9sp_di" bpmnElement="ServiceTheFirstTask">
+        <dc:Bounds x="270" y="297" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ServiceTask_0ka3hrn_di" bpmnElement="ServiceIITask">
+        <dc:Bounds x="430" y="297" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ServiceTask_0c10k4h_di" bpmnElement="ServiceX96Task">
+        <dc:Bounds x="590" y="297" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="SubProcess_1tpg5ix_di" bpmnElement="SubProcess_01hi1i9" isExpanded="true">
+        <dc:Bounds x="230" y="80" width="590" height="200" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="StartEvent_0rzd251_di" bpmnElement="GenericErrorStartEvent">
+        <dc:Bounds x="270" y="162" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="254" y="205" width="68" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1beugel_di" bpmnElement="SequenceFlow_1beugel">
+        <di:waypoint x="306" y="180" />
+        <di:waypoint x="360" y="180" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1vvp5o0_di" bpmnElement="SequenceFlow_1vvp5o0">
+        <di:waypoint x="460" y="180" />
+        <di:waypoint x="520" y="180" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="EndEvent_1q3k02i_di" bpmnElement="ErrorFixedAndReturnedEndEvent">
+        <dc:Bounds x="682" y="162" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="662" y="205" width="76" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0zped8j_di" bpmnElement="SequenceFlow_0zped8j">
+        <di:waypoint x="620" y="180" />
+        <di:waypoint x="682" y="180" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ServiceTask_078nq9x_di" bpmnElement="ReturnToLastTaskTask">
+        <dc:Bounds x="520" y="140" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="UserTask_0e71vxz_di" bpmnElement="FixIssueTask">
+        <dc:Bounds x="360" y="140" width="100" height="80" />
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
